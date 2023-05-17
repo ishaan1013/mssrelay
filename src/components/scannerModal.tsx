@@ -10,6 +10,7 @@ export default function ScannerModal({
   scanned,
   onSuccess,
   onFailure,
+  onTooFast,
   cams,
 }: {
   open: boolean;
@@ -17,6 +18,7 @@ export default function ScannerModal({
   scanned: number;
   onSuccess: () => void;
   onFailure: () => void;
+  onTooFast: () => void;
   cams: object[];
 }) {
   const code = codes[scanned % 4];
@@ -24,7 +26,7 @@ export default function ScannerModal({
 
   useEffect(() => {
     if (cooldown) {
-      window.setTimeout(() => setCooldown(false), 2000);
+      window.setTimeout(() => setCooldown(false), 3000);
     }
   }, [cooldown]);
 
@@ -37,8 +39,20 @@ export default function ScannerModal({
             <QrScanner
               onDecode={(result) => {
                 if (cooldown) return;
+
+                const now = Date.now();
+                const last = localStorage.getItem("lastScan");
+                if (last !== null) {
+                  const diff = now - parseInt(last);
+                  if (diff < 15000) {
+                    console.log("too fast: " + diff);
+                    onTooFast();
+                    return;
+                  }
+                }
+
                 setCooldown(true);
-                console.log("target: " + code + " result: " + result);
+                // console.log("target: " + code + " result: " + result);
                 if (result === code) {
                   onSuccess();
                 } else {

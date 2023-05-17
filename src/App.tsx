@@ -51,6 +51,8 @@ export default function Home() {
     localStorage.setItem("scanned", newScanned.toString());
     setScanned(newScanned);
 
+    localStorage.setItem("lastScan", Date.now().toString());
+
     setToasted(false);
     window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
@@ -64,7 +66,16 @@ export default function Home() {
     window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
       setToasted(true);
-      setMessage("Wrong code, follow the red one on the map! 🤦‍♀️");
+      setMessage("Wrong code, follow the map! 🤦‍♂️");
+    }, 100);
+  };
+
+  const onTooFast = () => {
+    setToasted(false);
+    window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      setToasted(true);
+      setMessage("You're a little too fast (or cheating)! 🙅‍♀️");
     }, 100);
   };
 
@@ -106,6 +117,7 @@ export default function Home() {
         scanned={scanned}
         onSuccess={onSuccess}
         onFailure={onFailure}
+        onTooFast={onTooFast}
         cams={cams}
       />
       <ResetModal
@@ -113,7 +125,7 @@ export default function Home() {
         setOpen={setResetOpen}
         confirmReset={confirmReset}
       />
-      <main className="flex min-h-screen overflow-x-hidden w-screen items-start justify-center px-6 xs:px-8 py-12 ">
+      <main className="flex min-h-screen overflow-x-hidden w-screen items-start justify-center p-6 xs:p-8 ">
         <div className="w-full max-w-screen-xs h-full">
           <div className="w-full rounded-lg overflow-hidden flex items-center relative bg-cover h-36 bg-blue-800">
             <img
