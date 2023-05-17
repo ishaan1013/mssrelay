@@ -10,6 +10,7 @@ import { useMediaDevices } from "@yudiel/react-qr-scanner";
 import "./index.css";
 import ScannerModal from "./components/scannerModal";
 import Notification from "./components/toast";
+import ResetModal from "./components/resetModal";
 
 export default function Home() {
   const [scanned, setScanned] = useState(0);
@@ -43,6 +44,7 @@ export default function Home() {
 
   const timerRef = useRef(0);
   const [toasted, setToasted] = useState(false);
+  const [message, setMessage] = useState("");
 
   const onSuccess = () => {
     const newScanned = scanned + 1;
@@ -53,6 +55,16 @@ export default function Home() {
     window.clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => {
       setToasted(true);
+      setMessage("Scan successful! 🚀");
+    }, 100);
+  };
+
+  const onFailure = () => {
+    setToasted(false);
+    window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      setToasted(true);
+      setMessage("Wrong code, follow the red one on the map! 🤦‍♀️");
     }, 100);
   };
 
@@ -67,15 +79,39 @@ export default function Home() {
       ? "2%"
       : Math.round((scanned / 36) * 100) + "%";
 
+  const confirmReset = () => {
+    localStorage.setItem("scanned", "0");
+    setScanned(0);
+
+    setToasted(false);
+    window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      setToasted(true);
+      setMessage("Progress reset. 🔁");
+    }, 100);
+  };
+
+  const [resetOpen, setResetOpen] = useState(false);
+
   return (
     <>
-      <Notification toasted={toasted} setToasted={setToasted} />
+      <Notification
+        message={message}
+        toasted={toasted}
+        setToasted={setToasted}
+      />
       <ScannerModal
         open={open}
         setOpen={setOpen}
         scanned={scanned}
         onSuccess={onSuccess}
+        onFailure={onFailure}
         cams={cams}
+      />
+      <ResetModal
+        open={resetOpen}
+        setOpen={setResetOpen}
+        confirmReset={confirmReset}
       />
       <main className="flex min-h-screen overflow-x-hidden w-screen items-start justify-center px-6 xs:px-8 py-12 ">
         <div className="w-full max-w-screen-xs h-full">
@@ -96,7 +132,7 @@ export default function Home() {
               <Focus className="w-10 h-10" />
               <div className="text-base font-medium mt-1">Scan QR</div>
             </button>
-            <div className="h-28 w-full rounded-lg bg-neutral-900 border border-neutral-700 flex flex-col items-center justify-center">
+            <div className="h-28 w-full rounded-lg bg-neutral-900 border border-neutral-800 flex flex-col items-center justify-center">
               <div className="text-4xl font-semibold text-yellow-500">
                 {scanned}
               </div>
@@ -106,7 +142,7 @@ export default function Home() {
           <div className="mt-8 font-semibold text-lg text-center w-full">
             Rewards
           </div>
-          <div className="rounded-full w-full mt-2 h-3 overflow-hidden bg-neutral-900 border border-neutral-700 relative">
+          <div className="rounded-full w-full mt-2 h-3 overflow-hidden bg-neutral-900 border border-neutral-800 relative">
             <div
               style={{ width: progress }}
               className="rounded-full absolute h-full bg-yellow-500"
@@ -187,7 +223,7 @@ export default function Home() {
             />
           </div>
           <button
-            // onClick={() => setScanned(0)}
+            onClick={() => setResetOpen(true)}
             className="w-full text-center mt-8 text-base font-medium opacity-30 transition-all hover:opacity-[0.15]"
           >
             Reset Data
