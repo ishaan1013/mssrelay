@@ -272,28 +272,26 @@ export default function Home() {
     );
   }
 
-  if (ended) {
-    return (
-      <main className="flex min-h-screen overflow-x-hidden w-screen items-center justify-center flex-col p-6 xs:p-8 ">
-        <div className="px-8 py-6 rounded-lg bg-neutral-900 border border-neutral-800 flex flex-col items-center justify-center">
-          <div className="text-4xl font-semibold text-yellow-500">
-            {scanned ? scanned : 0}
-          </div>
-          <div className="text-base font-medium">Scanned</div>
+  return (
+    <main className="flex min-h-screen overflow-x-hidden w-screen items-center justify-center flex-col p-6 xs:p-8 ">
+      <div className="px-8 py-6 rounded-lg bg-neutral-900 border border-neutral-800 flex flex-col items-center justify-center">
+        <div className="text-4xl font-semibold text-yellow-500">
+          {scanned ? scanned : 0}
         </div>
-        <div className="font-semibold mt-6 text-center">
-          This themed lap has now ended. Show this to MAC to claim your team's
-          rewards! 🎉
-        </div>
-        <a
-          href="https://www.instagram.com/mssrelayforlife/"
-          about="_blank"
-          rel="noreferrer"
-          className="text-yellow-500 font-medium mt-3"
-        >
-          @mssrelayforlife
-        </a>
-      </main>
-    );
-  }
+        <div className="text-base font-medium">Scanned</div>
+      </div>
+      <div className="font-semibold mt-6 text-center">
+        This themed lap has now ended. Show this to MAC to claim your team's
+        rewards! 🎉
+      </div>
+      <a
+        href="https://www.instagram.com/mssrelayforlife/"
+        about="_blank"
+        rel="noreferrer"
+        className="text-yellow-500 font-medium mt-3"
+      >
+        @mssrelayforlife
+      </a>
+    </main>
+  );
 }
