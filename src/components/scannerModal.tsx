@@ -39,7 +39,12 @@ export default function ScannerModal({
             <QrScanner
               onDecode={(result) => {
                 if (cooldown) return;
+                setCooldown(true);
 
+                if (result !== code) {
+                  onFailure();
+                  return;
+                }
                 const now = Date.now();
                 const last = localStorage.getItem("lastScan");
                 if (last !== null) {
@@ -51,13 +56,7 @@ export default function ScannerModal({
                   }
                 }
 
-                setCooldown(true);
-                // console.log("target: " + code + " result: " + result);
-                if (result === code) {
-                  onSuccess();
-                } else {
-                  onFailure();
-                }
+                onSuccess();
               }}
               onError={(error) => console.log(error?.message)}
             />

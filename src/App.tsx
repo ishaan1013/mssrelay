@@ -11,6 +11,7 @@ import "./index.css";
 import ScannerModal from "./components/scannerModal";
 import Notification from "./components/toast";
 import ResetModal from "./components/resetModal";
+import dates from "./utils/dates";
 
 export default function Home() {
   const [scanned, setScanned] = useState(0);
@@ -79,7 +80,13 @@ export default function Home() {
     }, 100);
   };
 
+  const [begun, setBegun] = useState(false);
+  const [ended, setEnded] = useState(false);
+
   useEffect(() => {
+    setBegun(Date.now() > new Date(dates.start).getTime());
+    setEnded(Date.now() > new Date(dates.end).getTime());
+
     return () => clearTimeout(timerRef.current);
   }, []);
 
@@ -104,8 +111,52 @@ export default function Home() {
 
   const [resetOpen, setResetOpen] = useState(false);
 
+  if (!begun) {
+    return (
+      <main className="flex min-h-screen overflow-x-hidden w-screen items-center justify-center flex-col p-6 xs:p-8 ">
+        <div className="font-semibold">This themed lap begins at 4:00PM ⌚</div>
+        <a
+          href="https://www.instagram.com/mssrelayforlife/"
+          about="_blank"
+          rel="noreferrer"
+          className="text-yellow-500 font-medium mt-3"
+        >
+          @mssrelayforlife
+        </a>
+      </main>
+    );
+  }
+
+  if (ended) {
+    return (
+      <main className="flex min-h-screen overflow-x-hidden w-screen items-center justify-center flex-col p-6 xs:p-8 ">
+        <div className="px-8 py-6 rounded-lg bg-neutral-900 border border-neutral-800 flex flex-col items-center justify-center">
+          <div className="text-4xl font-semibold text-yellow-500">
+            {scanned ? scanned : 0}
+          </div>
+          <div className="text-base font-medium">Scanned</div>
+        </div>
+        <div className="font-semibold mt-6 text-center">
+          This themed lap has now ended. Show this to MAC to claim your team's
+          rewards! 🎉
+        </div>
+        <a
+          href="https://www.instagram.com/mssrelayforlife/"
+          about="_blank"
+          rel="noreferrer"
+          className="text-yellow-500 font-medium mt-3"
+        >
+          @mssrelayforlife
+        </a>
+      </main>
+    );
+  }
+
   return (
     <>
+      <div>
+        {JSON.stringify(begun)} {JSON.stringify(ended)}
+      </div>
       <Notification
         message={message}
         toasted={toasted}
